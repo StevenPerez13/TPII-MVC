@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import simulator.model.Simulator;
 import simulator.model.animal.AnimalInfo;
 import simulator.model.gestorregion.MapInfo;
+import simulator.view.SimpleObjectViewer;
+import simulator.view.SimpleObjectViewer.ObjInfo;
 
 public class Controler {
 	private Simulator _sim;
