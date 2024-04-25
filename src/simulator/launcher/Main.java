@@ -70,10 +70,10 @@ public class Main {
 	private static String _in_file = null;
 	private static String _out_file = null;
 	private static ExecMode _mode = ExecMode.BATCH;
-	private static Double _delta_time = null; // Default value
-	private static Factory<SelectionStrategy> _selection_strategy_factory;
-	private static Factory<Animal> _animal_factory;
-	private static Factory<Region> _region_factory;
+	public static Double _delta_time = null; // Default value
+	public static Factory<SelectionStrategy> _selection_strategy_factory;
+	public static Factory<Animal> _animal_factory;
+	public static Factory<Region> _region_factory;
 	private static FileOutputStream _outputStream = null;
 	private static boolean _showSimpleViewer = false;
 

@@ -8,6 +8,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import simulator.model.EcoSysObserver;
 import simulator.model.Simulator;
 import simulator.model.animal.AnimalInfo;
 import simulator.model.gestorregion.MapInfo;
@@ -23,51 +24,8 @@ public class Controler {
 
 	public void load_data(JSONObject data) {
 
-		if (data.has("regions")) {
-			JSONArray regionsArray = data.getJSONArray("regions");
-			if(regionsArray.length() == 0) {
-				throw new IllegalArgumentException("There is no element in the regions key");
-					}
-			for (int i = 0; i < regionsArray.length(); i++) {
-				JSONObject region = regionsArray.getJSONObject(i);
-				if(!region.has("row")) {
-					throw new IllegalArgumentException("There is no row key in the"+i+"elements of the regions key");
-				}
-				if(!region.has("col")) {
-					throw new IllegalArgumentException("There is no col key in the"+i+"elements of the regions key");
-				}
-				if(!region.has("spec")) {
-					throw new IllegalArgumentException("There is no spec key in the"+i+"elements of the regions key");
-				}
-				try{
-					JSONArray row = region.getJSONArray("row");
-					if(row.getInt(0)> row.getInt(1)) {
-						throw new IllegalArgumentException("The range introduced for row must be sorted from lowest to highest");
-					}
-					int rf = row.getInt(0);
-					int rt = row.getInt(1);
-	
-					JSONArray col = region.getJSONArray("col");
-					if(col.getInt(0)> col.getInt(1)) {
-						throw new IllegalArgumentException("The range introduced for col must be sorted from lowest to highest");
-					}
-					int cf = col.getInt(0);
-					int ct = col.getInt(1);
-	
-					JSONObject spec = region.getJSONObject("spec");
-					for (int r = rf; r <= rt; r++) {
-						for (int c = cf; c <= ct; c++) {
-							_sim.set_region(r, c, spec);
-						}
-					}
-					
-				}
-				catch(Exception e) {
-					System.out.println("Error when inserting the"+i+"region of the regions key of the inpunt json");
-					throw new IllegalArgumentException(e.getMessage());
-				}
-			}
-		}
+		this.check_and_set_Regions(data);
+		
 		if (!data.has("animals")) 
 			throw new IllegalArgumentException("There is no \"animals\" key in the input file.");
 		JSONArray animalsArray = data.getJSONArray("animals");
@@ -126,6 +84,74 @@ public class Controler {
 			view.close();
 	}
 
+	public void reset(int cols, int rows, int width, int height) {
+		this._sim.reset(cols, rows, width, height);
+	}
+	
+	public void set_regions(JSONObject rs) {
+		this.check_and_set_Regions(rs);
+	}
+	
+	public void advance(double dt) {
+		this._sim.advance(dt);
+	}
+
+	public void addObserver(EcoSysObserver o) {
+		this._sim.addObserver(o);
+	}
+	
+	public void removeObserver(EcoSysObserver o) {
+		this._sim.removeObserver(o);
+	}
+	
+	private void check_and_set_Regions(JSONObject data) {
+		if (data.has("regions")) {
+			JSONArray regionsArray = data.getJSONArray("regions");
+			if(regionsArray.length() == 0) {
+				throw new IllegalArgumentException("The regions key cannot be empty.");
+					}
+			for (int i = 0; i < regionsArray.length(); i++) {
+				JSONObject region = regionsArray.getJSONObject(i);
+				if(!region.has("row")) {
+					throw new IllegalArgumentException("The row key is missing in region " + (i+1) + " of the regions key.");
+				}
+				if(!region.has("col")) {
+					throw new IllegalArgumentException("The col key is missing in region " + (i+1) + " of the regions key.");
+				}
+				if(!region.has("spec")) {
+					throw new IllegalArgumentException("The spec key is missing in region " + (i+1) + " of the regions key.");
+				}
+				try{
+					JSONArray row = region.getJSONArray("row");
+					if(row.getInt(0)> row.getInt(1)) {
+				        throw new IllegalArgumentException("The 'row' range must have the lower value first.");
+					}
+					int rf = row.getInt(0);
+					int rt = row.getInt(1);
+	
+					JSONArray col = region.getJSONArray("col");
+					if(col.getInt(0)> col.getInt(1)) {
+				        throw new IllegalArgumentException("The 'col' range must have the lower value first.");
+					}
+					int cf = col.getInt(0);
+					int ct = col.getInt(1);
+	
+					JSONObject spec = region.getJSONObject("spec");
+					for (int r = rf; r <= rt; r++) {
+						for (int c = cf; c <= ct; c++) {
+							_sim.set_region(r, c, spec);
+						}
+					}
+					
+				}
+				catch(Exception e) {
+				    System.out.println("Error when inserting the " + (i + 1) + " region of the 'regions' key in the input JSON");
+					throw new IllegalArgumentException(e.getMessage());
+				}
+			}
+		}
+	}
+	
 	private List<ObjInfo> to_animals_info(List<? extends AnimalInfo> animals) {
 		List<ObjInfo> ol = new ArrayList<>(animals.size());
 		for (AnimalInfo a : animals)
@@ -135,4 +161,5 @@ public class Controler {
 		return ol;
 	}
 
+	
 }
