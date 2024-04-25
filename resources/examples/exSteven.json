@@ -1,0 +1,29 @@
+{
+  "width" : 500,
+  "height" : 300,
+  "cols" : 10,
+  "rows" : 8,
+  "animals" : [ {
+    "amount" : 5,
+    "spec" : {
+      "type" : "sheep",
+      "data" : {
+        "pos" : {
+          "x_range" : [ 100.0, 200.0 ],
+          "y_range" : [ 100.0, 200.0 ]
+        }
+      }
+    }
+  },{
+    "amount" : 3,
+    "spec" : {
+      "type" : "wolf",
+      "data" : {
+        "pos" : {
+          "x_range" : [ 400.0, 500.0 ],
+          "y_range" : [ 250.0, 350.0 ]
+        }
+      }
+    } 
+  } ]
+}
